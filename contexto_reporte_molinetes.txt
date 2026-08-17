@@ -1,0 +1,171 @@
+================================================================
+CONTEXTO — REPORTE DE MOLINETES (CONTROL DE ACCESO UNIVERSIDAD)
+Handoff para Claude Code / VS Code
+================================================================
+
+## 1. ARCHIVO FUENTE
+- Nombre: Todos_los_Eventos_20260424111010.xls
+- OJO: la extensión es .xls pero el archivo REAL es formato xlsx moderno
+  (Microsoft Excel 2007+ / OOXML). openpyxl lo rechaza por la extensión.
+  Leerlo con pandas: pd.read_excel(ruta, header=1)  (el engine se autodetecta).
+  Si openpyxl falla, es por la extensión, no por el contenido.
+- Tamaño: ~6.96 MB
+- Una sola hoja: "Todos los Eventos"
+- La FILA 0 es un título ("Todos los Eventos"); los encabezados reales
+  están en la FILA 1 -> por eso header=1 al leer con pandas.
+- 100.000 filas de datos (una fila = un evento de molinete).
+
+## 2. QUÉ ES
+Log de control de acceso de 4 molinetes físicos ubicados TODOS en la
+entrada principal de una universidad. Cada fila es una activación de
+molinete (una "pasada"), no una persona. Sistema tipo ZKTeco/Hikvision.
+
+## 3. COLUMNAS (13)
+1.  Tiempo                  -> fecha y hora exacta de la activación del molinete.
+                              Rango en este reporte: 2026-04-07 21:36:19
+                              a 2026-04-24 11:08:41.
+2.  Nombre de Área          -> constante = "Entrada". Todos los molinetes
+                              están físicamente en la entrada principal.
+                              No aporta para segmentar (valor único).
+3.  Nombre de Dispositivo   -> el molinete, identificado por IP. 4 molinetes:
+                              192.168.5.111, 192.168.5.110, 192.168.5.112,
+                              192.168.5.106.
+4.  Punto del Evento        -> indica ENTRADA o SALIDA y desde qué molinete.
+                              El texto suele traer "Entrada"/"Salida", EXCEPTO
+                              el molinete 5.106, que hay que mapear a mano:
+                                192.168.5.106-2  = ENTRADA
+                                192.168.5.106-1  = SALIDA
+                              (los otros molinetes ya dicen Entrada/Salida en
+                              el propio texto del punto).
+5.  Descripción del Evento  -> tipo de evento. Valores y significado:
+                                "Apertura con verificación normal" = usuario
+                                    normal, acceso OK (77.242 filas).
+                                "Usuario no registrado" = credencial sin
+                                    persona válida asociada (15.004 filas).
+                                    Estas filas tienen ID/Nombre NULOS.
+                                "Deshabilitada" = ESTUDIANTE BLOQUEADO POR
+                                    DEUDA DE PAGO (7.344 filas).
+                                "Conectado con el servidor" (119)
+                                "No se puede conectar con el servidor" (114)
+                                "Desconectado" (112)
+                                "Equipo Inicializado" (65)
+6.  Nivel de Evento         -> Normal / Excepción / Alarma.
+                                "Deshabilitada" (bloqueado por deuda) se
+                                correlaciona con Nivel = "Excepción".
+                                Normal=77.426, Excepción=22.348, Alarma=226.
+7.  ID                      -> id de la persona. NULO en filas de "Usuario no
+                              registrado" (15.274 filas con ID nulo en total).
+8.  Nombre                  -> nombre de la persona (nulo si no registrado).
+9.  Apellido                -> apellido de la persona.
+10. Tarjeta                 -> número de tarjeta/credencial.
+11. Nombre de Departamento  -> abreviatura de la CARRERA o rol (ver tabla).
+12. Nombre de Lector        -> lector físico del molinete (más granular que
+                              el dispositivo).
+13. Modo de Verificación    -> "Solo Huella" (87.694), "Solo Tarjeta" (11.896),
+                              "Otro" (410).
+
+## 4. DICCIONARIO DE DEPARTAMENTOS / CARRERAS
+SIS = Sistemas
+DGP = Diseño Gráfico y Producción Crossmedia
+PYM = Publicidad y Marketing
+ODO = Odontología
+ENF = Enfermería
+ARQ = Arquitectura
+ICO = Ingeniería Comercial
+GAC = Gastronomía y Artes Culinarias
+BYF = Bioquímica y Farmacia
+DER = Derecho
+MED = Medicina
+DOCENTE = Docentes
+ADMINISTRATIVO / ADMINISTRATIVOS = Personal que trabaja en la universidad
+ADM = Administración de Empresas
+PER = Periodismo
+PSI = Psicología
+CPU = Contaduría Pública
+
+## 5. DEPARTAMENTOS PRESENTES EN LA DATA PERO NO DEFINIDOS POR EL USUARIO
+Aparecen en el archivo pero el usuario NO los explicó — CONFIRMAR significado
+antes de usarlos en reportes:
+  AHT, POSTGRADO, Unifranz, VISITA
+
+## 6. HALLAZGOS YA VALIDADOS CONTRA LA DATA
+- Cobertura temporal: 16 días (2026-04-07 a 2026-04-24), 17 fechas
+  calendario distintas.
+    -> Alcanza para reportes DIARIOS y SEMANALES.
+    -> NO alcanza para reporte MENSUAL (se necesitan >=28 días).
+- Total eventos de ENTRADA: 52.585 (esto son PASADAS, no personas).
+- IDs (personas) únicos que aparecen en el período: 2.991.
+- Bloqueados por deuda ("Deshabilitada"):
+    * 7.344 eventos.
+    * 848 PERSONAS únicas (por ID).
+    * Representan ~28% de los 2.991 IDs que aparecen en el período.
+    * IMPORTANTE: son bloqueados que INTENTARON pasar. Un bloqueado que no
+      fue al campus no aparece. No es "todos los bloqueados de la universidad".
+- % de bloqueados por carrera (personas únicas bloqueadas / personas únicas
+  de esa carrera), ordenado de mayor a menor:
+    GAC 56.2%  (16 total, 9 bloq)
+    DGP 39.5%  (253, 100)
+    PSI 39.5%  (119, 47)
+    ARQ 39.1%  (151, 59)
+    ODO 38.4%  (198, 76)
+    BYF 36.6%  (186, 68)
+    PER 34.1%  (44, 15)
+    PYM 31.8%  (324, 103)
+    MED 30.1%  (438, 132)
+    ICO 28.9%  (204, 59)
+    AHT 27.5%  (80, 22)
+    SIS 27.4%  (117, 32)
+    ENF 25.4%  (177, 45)
+    ADM 24.0%  (75, 18)
+    CPU 23.8%  (63, 15)
+    DER 23.2%  (207, 48)
+    DOCENTE, ADMINISTRATIVOS, POSTGRADO, Unifranz, VISITA -> 0 bloqueados
+      (lógico: no pagan matrícula de estudiante).
+
+## 7. ADVERTENCIAS DE CALIDAD DE DATOS (leer antes de calcular)
+- FILA vs PERSONA: cada fila es una pasada de molinete. Para "cuántos
+  estudiantes ingresan" hay que contar ID únicos (nunique), NO filas.
+  Para "flujo/afluencia de molinete" sí se cuentan filas.
+- 15.274 filas con ID nulo y 15.334 con Nombre nulo = eventos "Usuario no
+  registrado". No se pueden atribuir a una persona ni carrera. Excluirlos de
+  cualquier conteo por persona/carrera.
+- La columna "Nombre de Área" es constante ("Entrada") -> inútil para segmentar.
+- Molinete 5.106 no dice Entrada/Salida en el texto: mapear -2=Entrada,
+  -1=Salida (ver columna 4).
+- Al leer, ID y Tarjeta vienen como float (ej. 4699.0). Convertir a int/str
+  para mostrar.
+
+## 8. QUÉ SE PUEDE OBTENER / GRAFICAR (respondido al usuario)
+Confirmado factible:
+- Ingresos por DÍA y por SEMANA (personas únicas y/o pasadas). Mensual NO.
+- Total de estudiantes bloqueados por deuda (848 únicos).
+- % de bloqueados por carrera (ver tabla arriba).
+- Día de mayor afluencia (día pico).
+
+Sugerencias adicionales validadas como factibles:
+- Horas pico de entrada y de salida (heatmap hora x día de la semana).
+- Balance entrada/salida por molinete (detectar saturación o mal uso).
+- Reincidencia de bloqueados (cuántas veces intenta pasar cada bloqueado;
+  picos pueden marcar la fecha de corte de pagos).
+- Modo de verificación: 88% huella vs 12% tarjeta; ver quién usa tarjeta
+  (posible problema de registro biométrico) y correlación con carrera.
+- Permanencia estimada en campus (emparejar entrada/salida por persona/día;
+  margen de error por pasadas no registradas).
+- Ausentismo: estudiantes registrados que nunca aparecen en el período.
+- Salud de molinetes: eventos de conexión/desconexión por dispositivo, para
+  mantenimiento.
+
+## 9. SNIPPET DE CARGA RECOMENDADO
+import pandas as pd
+df = pd.read_excel("Todos_los_Eventos_20260424111010.xls", header=1)
+df["Tiempo"] = pd.to_datetime(df["Tiempo"], errors="coerce")
+df["ID"] = df["ID"].astype("Int64")            # nullable int, respeta nulos
+df["es_entrada"] = df["Punto del Evento"].str.contains("Entrada|entrada|106-2", na=False)
+df["es_salida"]  = df["Punto del Evento"].str.contains("Salida|106-1", na=False)
+df["bloqueado"]  = df["Descripción del Evento"].eq("Deshabilitada")
+df["fecha"] = df["Tiempo"].dt.date
+# personas únicas que entran por día:
+#   df[df.es_entrada].groupby("fecha")["ID"].nunique()
+# bloqueados únicos por carrera:
+#   df[df.bloqueado].groupby("Nombre de Departamento")["ID"].nunique()
+================================================================

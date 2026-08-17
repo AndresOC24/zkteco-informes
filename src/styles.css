@@ -1,0 +1,705 @@
+/* ============================================================
+   Tokens — paleta de referencia dataviz (validada light y dark)
+   ============================================================ */
+:root {
+  color-scheme: light;
+  --page: #f9f9f7;
+  --surface: #fcfcfb;
+  --text-1: #0b0b0b;
+  --text-2: #52514e;
+  --muted: #898781;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --border: rgba(11, 11, 11, 0.1);
+  --good-text: #006300;
+
+  --series-1: #2a78d6; /* azul */
+  --series-2: #eb6834; /* naranja */
+  --series-3: #1baf7a; /* aqua */
+  --series-4: #eda100; /* amarillo */
+  --series-5: #e87ba4; /* magenta */
+  --series-8: #e34948; /* rojo */
+
+  --deemph: #c9c8c1;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+  --radius: 12px;
+  --shadow: 0 1px 2px rgba(11, 11, 11, 0.04), 0 2px 8px rgba(11, 11, 11, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme='light'])) {
+    color-scheme: dark;
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --text-1: #ffffff;
+    --text-2: #c3c2b7;
+    --muted: #898781;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --border: rgba(255, 255, 255, 0.1);
+    --good-text: #0ca30c;
+
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --series-5: #d55181;
+    --series-8: #e66767;
+
+    --deemph: #4a4a47;
+    --shadow: none;
+  }
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --page: #0d0d0d;
+  --surface: #1a1a19;
+  --text-1: #ffffff;
+  --text-2: #c3c2b7;
+  --muted: #898781;
+  --grid: #2c2c2a;
+  --axis: #383835;
+  --border: rgba(255, 255, 255, 0.1);
+  --good-text: #0ca30c;
+
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --series-8: #e66767;
+
+  --deemph: #4a4a47;
+  --shadow: none;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background: var(--page);
+  color: var(--text-1);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* ============================================================
+   Layout
+   ============================================================ */
+.app {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 24px 24px 64px;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 4px 0 20px;
+}
+
+.app-header h1 {
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.app-header .subtitle {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 1px;
+}
+
+.header-spacer {
+  flex: 1;
+}
+
+/* ============================================================
+   Botones
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-1);
+  font-size: 13px;
+  font-weight: 550;
+  box-shadow: var(--shadow);
+  transition: transform 160ms var(--ease-out), background 160ms ease;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover {
+    background: color-mix(in srgb, var(--surface) 94%, var(--text-1));
+  }
+}
+
+.btn-primary {
+  background: var(--series-1);
+  border-color: transparent;
+  color: #fff;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover {
+    background: color-mix(in srgb, var(--series-1) 90%, #000);
+  }
+}
+
+.btn-icon {
+  padding: 7px;
+  line-height: 0;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-2);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn-ghost:hover {
+    background: color-mix(in srgb, var(--surface) 88%, var(--text-1));
+    color: var(--text-1);
+  }
+}
+
+/* ============================================================
+   Filtros (una fila, encima de todo lo que filtran)
+   ============================================================ */
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-bottom: 16px;
+}
+
+.seg {
+  display: inline-flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 3px;
+  box-shadow: var(--shadow);
+}
+
+.seg button {
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+  transition: color 160ms ease, background 160ms ease, transform 160ms var(--ease-out);
+}
+
+.seg button:active {
+  transform: scale(0.97);
+}
+
+.seg button[aria-pressed='true'] {
+  background: color-mix(in srgb, var(--series-1) 12%, var(--surface));
+  color: var(--text-1);
+  font-weight: 600;
+}
+
+.filter-range {
+  color: var(--muted);
+  font-size: 13px;
+  margin-left: 4px;
+}
+
+.seg-tabs button {
+  padding: 5px 16px;
+  font-weight: 550;
+}
+
+.date-range {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 3px 8px;
+  box-shadow: var(--shadow);
+}
+
+.date-input {
+  font: inherit;
+  font-size: 13px;
+  color: var(--text-1);
+  background: transparent;
+  border: none;
+  padding: 4px 2px;
+  border-radius: 6px;
+  transition: background 160ms ease;
+}
+
+.date-input:focus-visible {
+  outline: none;
+  background: color-mix(in srgb, var(--series-1) 10%, transparent);
+}
+
+.date-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.55;
+}
+
+.date-sep {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* ============================================================
+   Grid de tarjetas
+   ============================================================ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 14px;
+}
+
+.card {
+  grid-column: span 12;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px 18px 16px;
+  min-width: 0;
+}
+
+/* Fila de KPIs: se acomoda sola a 4 o 5 tarjetas según la pestaña */
+.kpi-row {
+  grid-column: span 12;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(186px, 1fr));
+  gap: 14px;
+}
+
+/* las tarjetas del KPI ocupan una celda de esta fila, no 12 columnas del grid padre */
+.kpi-row .card {
+  grid-column: auto;
+}
+
+.span-3 { grid-column: span 3; }
+.span-4 { grid-column: span 4; }
+.span-6 { grid-column: span 6; }
+.span-8 { grid-column: span 8; }
+
+@media (max-width: 900px) {
+  .span-3 { grid-column: span 6; }
+  .span-4, .span-6, .span-8 { grid-column: span 12; }
+}
+
+@media (max-width: 520px) {
+  .span-3 { grid-column: span 12; }
+  .app { padding: 16px 12px 48px; }
+}
+
+/* Entrada escalonada de tarjetas (solo al montar el dashboard) */
+@media (prefers-reduced-motion: no-preference) {
+  .grid .card,
+  .grid .section-title,
+  .grid .footnote {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: card-in 400ms var(--ease-out) forwards;
+    animation-delay: calc(var(--stagger, 0) * 40ms);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grid .card,
+  .grid .section-title,
+  .grid .footnote {
+    animation: fade-in 200ms ease forwards;
+  }
+}
+
+@keyframes card-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Recarga: se mantiene el render anterior atenuado, sin saltos de layout */
+.dashboard {
+  transition: opacity 240ms ease;
+}
+
+.dashboard.is-loading {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* ============================================================
+   Stat tiles
+   ============================================================ */
+.stat-label {
+  font-size: 13px;
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 26px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  margin-top: 4px;
+}
+
+.stat-hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.stat-hint .good {
+  color: var(--good-text);
+  font-weight: 550;
+}
+
+/* ============================================================
+   Tarjeta de gráfico
+   ============================================================ */
+.chart-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.chart-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.chart-sub {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.chart-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  font-size: 12.5px;
+  color: var(--text-2);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.legend-line {
+  width: 14px;
+  height: 2px;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+.chart-body {
+  position: relative;
+}
+
+.chart-body svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+.chart-body text {
+  font-family: inherit;
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  padding: 8px 11px;
+  font-size: 12.5px;
+  z-index: 10;
+  min-width: 120px;
+  opacity: 0;
+  transform: scale(0.97);
+  transition: opacity 125ms var(--ease-out), transform 125ms var(--ease-out);
+}
+
+.tooltip.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.tooltip .tt-title {
+  color: var(--muted);
+  font-size: 11.5px;
+  margin-bottom: 4px;
+}
+
+.tooltip .tt-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 2px;
+}
+
+.tooltip .tt-key {
+  width: 12px;
+  height: 2px;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+.tooltip .tt-value {
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.tooltip .tt-label {
+  color: var(--text-2);
+}
+
+/* Vista de tabla (gemela accesible de cada gráfico) */
+.table-view {
+  max-height: 320px;
+  overflow: auto;
+}
+
+.table-view-tall {
+  max-height: 460px;
+}
+
+.search-input {
+  font: inherit;
+  font-size: 13px;
+  color: var(--text-1);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 11px;
+  width: 210px;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.search-input::placeholder {
+  color: var(--muted);
+}
+
+.search-input:focus-visible {
+  outline: none;
+  border-color: var(--series-1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--series-1) 18%, transparent);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+@media (max-width: 620px) {
+  .chart-actions {
+    flex-wrap: wrap;
+  }
+  .search-input {
+    width: 150px;
+  }
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.data-table th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-2);
+  padding: 6px 10px 6px 0;
+  border-bottom: 1px solid var(--grid);
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+}
+
+.data-table td {
+  padding: 5px 10px 5px 0;
+  border-bottom: 1px solid var(--grid);
+  color: var(--text-1);
+}
+
+.data-table td.num,
+.data-table th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* ============================================================
+   Zona de carga de XLS
+   ============================================================ */
+.upload-card {
+  border: 1.5px dashed var(--axis);
+  border-radius: var(--radius);
+  background: transparent;
+  box-shadow: none;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  transition: border-color 160ms ease, background 160ms ease, transform 200ms var(--ease-out);
+}
+
+.upload-card.drag-over {
+  border-color: var(--series-1);
+  background: color-mix(in srgb, var(--series-1) 6%, transparent);
+  transform: scale(1.005);
+}
+
+.upload-card .up-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.upload-card .up-sub {
+  color: var(--muted);
+  font-size: 12.5px;
+  max-width: 480px;
+}
+
+.upload-error {
+  color: var(--series-8);
+  font-size: 13px;
+  font-weight: 550;
+}
+
+.source-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--surface) 60%, var(--page));
+  border: 1px solid var(--border);
+  padding: 3px 10px;
+  border-radius: 999px;
+  max-width: 340px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Overlay de arrastre global */
+.drop-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--page) 72%, transparent);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+}
+
+.drop-overlay.visible {
+  opacity: 1;
+}
+
+.drop-overlay .drop-box {
+  border: 2px dashed var(--series-1);
+  border-radius: 16px;
+  padding: 40px 56px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-1);
+  background: var(--surface);
+}
+
+/* Sección de encabezado de grupo */
+.section-title {
+  grid-column: span 12;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 10px;
+}
+
+.footnote {
+  grid-column: span 12;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}

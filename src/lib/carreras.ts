@@ -1,0 +1,25 @@
+/** Diccionario de departamentos/carreras (ver contexto del reporte) */
+export const CARRERAS: Record<string, string> = {
+  SIS: 'Sistemas',
+  DGP: 'Diseño Gráfico y Producción Crossmedia',
+  PYM: 'Publicidad y Marketing',
+  ODO: 'Odontología',
+  ENF: 'Enfermería',
+  ARQ: 'Arquitectura',
+  ICO: 'Ingeniería Comercial',
+  GAC: 'Gastronomía y Artes Culinarias',
+  BYF: 'Bioquímica y Farmacia',
+  DER: 'Derecho',
+  MED: 'Medicina',
+  ADM: 'Administración de Empresas',
+  PER: 'Periodismo',
+  PSI: 'Psicología',
+  CPU: 'Contaduría Pública',
+  DOCENTE: 'Docentes',
+  ADMINISTRATIVO: 'Personal administrativo',
+  // Presentes en la data sin definición confirmada por el usuario
+  AHT: 'AHT (sin confirmar)',
+  POSTGRADO: 'Postgrado (sin confirmar)',
+  Unifranz: 'Unifranz (sin confirmar)',
+  VISITA: 'Visitas (sin confirmar)',
+};
